@@ -1,9 +1,9 @@
 filename,true_type,predicted_type,claimed_extension,predicted_extension,actual_status,predicted_status,threats_detected,threat_score,confidence,prediction_correct,detection_correct,is_malicious_actual,is_malicious_predicted,folder,challenge_type,description
-adversarial_0001_mixed.exe,pdf,txt,.exe,.txt,DECEPTIVE,MALICIOUS,"POLYGLOT_FILE,EXTENSION_SPOOFING",0.7,0.7129910508830847,False,True,True,True,PDF,Mixed Content,PDF header followed by PNG content
-adversarial_0002_minimal.jpg,pdf,png,.jpg,.png,DECEPTIVE,MALICIOUS,"STEGANOGRAPHY_SUSPECT,EXTENSION_SPOOFING",0.5,0.6340814578260675,False,True,True,True,PDF,Minimal Magic,Minimal PDF signature with null padding
-adversarial_0003_corrupted.pdf,png,txt,.pdf,.txt,DECEPTIVE,MALICIOUS,"HEADER_MANIPULATION,EXTENSION_SPOOFING",0.6,0.9999968786439235,False,True,True,True,PNG,Corrupted Magic,Slightly corrupted PNG signature
-adversarial_0004_binary_text.png,txt,pdf,.png,.pdf,DECEPTIVE,SUSPICIOUS,EXTENSION_SPOOFING,0.3,0.6518829240767345,False,True,True,True,TXT,Binary-like Text,Text file with escaped binary sequences
-adversarial_0005_tiny.txt,pdf,png,.txt,.png,DECEPTIVE,SUSPICIOUS,EXTENSION_SPOOFING,0.3,0.614027197702806,False,True,True,True,PDF,Tiny File,Very small PDF file
-adversarial_0006_polyglot.mp3,pdf,txt,.mp3,.txt,DECEPTIVE,MALICIOUS,"HEADER_MANIPULATION,EXTENSION_SPOOFING",0.6,0.9968184617326576,False,True,True,True,PDF,Polyglot,File valid as both PDF and text
-adversarial_0007_real.exe,png,txt,.exe,.txt,DECEPTIVE,SUSPICIOUS,EXTENSION_SPOOFING,0.3,0.5145907088961801,False,True,True,True,PNG,"Real File, Wrong Extension",Legitimate PNG with .exe extension
-adversarial_0008_normal.txt,txt,txt,.txt,.txt,LEGITIMATE,LEGITIMATE,NONE,0.0,0.9676907740520502,True,True,False,False,TXT,Control - Normal,Normal text file with correct extension
+adversarial_0001_mixed.exe,pdf,pdf,.exe,.pdf,DECEPTIVE,SUSPICIOUS,POLYGLOT_FILE,0.4,0.53184331187123,True,True,True,True,PDF,Mixed Content,PDF header followed by PNG content
+adversarial_0002_minimal.jpg,pdf,png,.jpg,.png,DECEPTIVE,MALICIOUS,"STEGANOGRAPHY_SUSPECT,EXTENSION_SPOOFING",0.5,0.5953853306212943,False,True,True,True,PDF,Minimal Magic,Minimal PDF signature with null padding
+adversarial_0003_corrupted.pdf,png,txt,.pdf,.txt,DECEPTIVE,MALICIOUS,"HEADER_MANIPULATION,EXTENSION_SPOOFING",0.6,0.9884835485821273,False,True,True,True,PNG,Corrupted Magic,Slightly corrupted PNG signature
+adversarial_0004_binary_text.png,txt,txt,.png,.txt,DECEPTIVE,LEGITIMATE,NONE,0.0,0.9842700705511089,True,False,True,False,TXT,Binary-like Text,Text file with escaped binary sequences
+adversarial_0005_tiny.txt,pdf,png,.txt,.png,DECEPTIVE,SUSPICIOUS,EXTENSION_SPOOFING,0.3,0.5604710896083488,False,True,True,True,PDF,Tiny File,Very small PDF file
+adversarial_0006_polyglot.mp3,pdf,txt,.mp3,.txt,DECEPTIVE,MALICIOUS,"HEADER_MANIPULATION,EXTENSION_SPOOFING",0.6,0.9678155904744484,False,True,True,True,PDF,Polyglot,File valid as both PDF and text
+adversarial_0007_real.exe,png,pdf,.exe,.pdf,DECEPTIVE,SUSPICIOUS,EXTENSION_SPOOFING,0.3,0.43013041474518204,False,True,True,True,PNG,"Real File, Wrong Extension",Legitimate PNG with .exe extension
+adversarial_0008_normal.txt,txt,txt,.txt,.txt,LEGITIMATE,LEGITIMATE,NONE,0.0,0.7352215868045175,True,True,False,False,TXT,Control - Normal,Normal text file with correct extension

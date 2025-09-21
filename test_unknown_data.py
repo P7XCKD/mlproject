@@ -567,23 +567,41 @@ def main():
         if os.path.exists(test_folder):
             print(f"\\n=== {test_name} ===")
             
+            # Add explanations for each test type
+            if "adversarial" in test_folder:
+                print("📝 ADVERSARIAL TEST INFO:")
+                print("   • Tests files specifically designed to fool the ML model")
+                print("   • Includes challenging edge cases and intentionally deceptive files")
+                print("   • Lower accuracy is expected - shows robustness against attacks")
+                print("   • Helps identify where the model might be vulnerable\\n")
+            else:
+                print("📝 UNKNOWN DATA TEST INFO:")
+                print("   • Tests on completely new files the model has never seen")
+                print("   • Simulates real-world performance on fresh data")
+                print("   • Shows how well the model generalizes beyond training data")
+                print("   • Core test for practical file type detection\\n")
+            
             # Test the model
             results_df = test_on_unknown_data(test_folder)
             
             if results_df is not None:
                 print(f"\\n=== {test_name} Complete! ===")
                 if "adversarial" in test_folder:
-                    print("These metrics show how the model handles challenging edge cases.")
+                    print("💡 INTERPRETATION: These metrics show how the model handles challenging edge cases.")
+                    print("   Lower accuracy here is normal and expected for adversarial scenarios.")
                 else:
-                    print("These metrics represent the model's real-world performance on unseen data.")
+                    print("💡 INTERPRETATION: These metrics represent the model's real-world performance.")
+                    print("   This is the most important test for practical file detection.")
             else:
                 print(f"Failed to test on {test_folder}.")
         else:
             print(f"\\n{test_name} folder not found: {test_folder}")
             if "adversarial" in test_folder:
-                print("Run create_adversarial_test.py first to create challenging test cases.")
+                print("💡 INFO: Adversarial tests check model robustness against deceptive files.")
+                print("   Run create_adversarial_test.py first to create challenging test cases.")
             else:
-                print("Run create_unknown_test_data.py first to create the test dataset.")
+                print("💡 INFO: Unknown data tests check real-world performance on fresh files.")
+                print("   Run create_unknown_test_data.py first to create the test dataset.")
 
 if __name__ == "__main__":
     main()

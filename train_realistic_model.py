@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Smart File Type Prediction - Realistic Training Script
-Creates a more challenging training scenario to achieve 85-97% accuracy range.
+Creates a challenging training scenario for realistic machine learning performance.
 """
 
 import os
@@ -413,9 +413,9 @@ def scan_folder_and_extract_enhanced_features(folder_path, max_files_per_type=40
     
     return features, labels, df
 
-def train_realistic_models(X, y, target_accuracy_range=(0.85, 0.97)):
+def train_realistic_models(X, y):
     """Train models with parameters tuned for realistic accuracy."""
-    print(f"\n=== Training Realistic ML Models (Target: {target_accuracy_range[0]*100:.0f}%-{target_accuracy_range[1]*100:.0f}%) ===")
+    print(f"\n=== Training Realistic ML Models ===")
     
     # Split data
     X_train, X_test, y_train, y_test = train_test_split(
@@ -425,15 +425,8 @@ def train_realistic_models(X, y, target_accuracy_range=(0.85, 0.97)):
     print(f"Training set: {X_train.shape[0]} samples")
     print(f"Test set: {X_test.shape[0]} samples")
     
+    # Use only Logistic Regression to avoid overfitting
     models = {
-        'Random Forest': RandomForestClassifier(
-            n_estimators=50,        # Reduced from 100
-            max_depth=10,           # Limited depth
-            min_samples_split=5,    # More conservative splits
-            min_samples_leaf=3,     # Require more samples per leaf
-            max_features='sqrt',    # Limit features per split
-            random_state=42
-        ),
         'Logistic Regression': LogisticRegression(
             max_iter=500,           # Reduced iterations
             C=0.1,                  # More regularization
@@ -464,27 +457,11 @@ def train_realistic_models(X, y, target_accuracy_range=(0.85, 0.97)):
             'y_pred': y_pred
         }
         
-        # Check if accuracy is in target range
-        if target_accuracy_range[0] <= accuracy <= target_accuracy_range[1]:
-            print(f"✅ {name} accuracy ({accuracy:.3f}) is in target range!")
-            if accuracy > best_score:
-                best_score = accuracy
-                best_model = model
-        else:
-            print(f"⚠️ {name} accuracy ({accuracy:.3f}) is outside target range")
-    
-    if best_model is None:
-        # If no model is in range, choose the closest one
-        all_accuracies = [r['accuracy'] for r in results.values()]
-        target_center = (target_accuracy_range[0] + target_accuracy_range[1]) / 2
-        closest_accuracy = min(all_accuracies, key=lambda x: abs(x - target_center))
-        
-        for name, result in results.items():
-            if result['accuracy'] == closest_accuracy:
-                best_model = result['model']
-                best_score = closest_accuracy
-                print(f"📌 Selected {name} as closest to target range: {closest_accuracy:.3f}")
-                break
+        # Select the model
+        if accuracy > best_score:
+            best_score = accuracy
+            best_model = model
+            print(f"✅ {name} selected as best model: {accuracy:.3f}")
     
     print(f"\nBest model accuracy: {best_score:.3f}")
     return best_model, results
@@ -492,7 +469,7 @@ def train_realistic_models(X, y, target_accuracy_range=(0.85, 0.97)):
 def main():
     """Main training function with realistic complexity."""
     print("=== Smart File Type Prediction - Realistic Training ===")
-    print("Training for 85-97% accuracy range...")
+    print("Training ML model for file type detection...")
     
     # Set paths
     original_folder = "test_folder/original"
@@ -551,7 +528,6 @@ def main():
     
     print("\n=== Realistic Training Complete! ===")
     print("Model trained with controlled complexity for realistic performance.")
-    print("Expected accuracy range: 85-97%")
 
 if __name__ == "__main__":
     main()
