@@ -104,7 +104,7 @@ def scan_folder_and_extract_features(folder_path):
     if not os.path.exists(folder_path):
         print(f"Error: Folder {folder_path} does not exist!")
         return None, None, None
-    
+
     file_data = []
     file_paths = []
     
@@ -120,8 +120,17 @@ def scan_folder_and_extract_features(folder_path):
             if file_bytes is None:
                 continue
             
-            # Detect true file type
-            true_type = detect_file_type_by_magic(file_bytes)
+            # Determine true file type from folder structure
+            folder_name = os.path.basename(root).lower()
+            if folder_name in ['pdf']:
+                true_type = 'pdf'
+            elif folder_name in ['png']:
+                true_type = 'png'
+            elif folder_name in ['txt']:
+                true_type = 'txt'
+            else:
+                # Fallback to magic number detection for other cases
+                true_type = detect_file_type_by_magic(file_bytes)
             
             # Create features
             raw_features = bytes_to_features(file_bytes)
@@ -138,7 +147,6 @@ def scan_folder_and_extract_features(folder_path):
                 'features': combined_features,
                 'file_size': len(file_bytes)
             })
-            
             file_paths.append(file_path)
     
     if not file_data:
@@ -210,10 +218,9 @@ def main():
     """Main training function."""
     print("=== Smart File Type Prediction - Training ===")
     
-    # Set paths
-    original_folder = input("Enter path to 'original' folder (or press Enter for default): ").strip()
-    if not original_folder:
-        original_folder = "test_folder/original"
+    # Set paths - automatically use our dataset
+    original_folder = "test_folder/original"
+    print(f"Using dataset folder: {original_folder}")
     
     # Extract features
     features, labels, df = scan_folder_and_extract_features(original_folder)

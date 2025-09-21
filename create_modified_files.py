@@ -164,25 +164,14 @@ def main():
     """Main function to create modified files."""
     print("=== Smart File Type Prediction - Create Modified Files ===")
     
-    # Get folder paths
-    original_folder = input("Enter path to 'original' folder (or press Enter for default): ").strip()
-    if not original_folder:
-        original_folder = "test_folder/original"
+    # Set folder paths automatically
+    original_folder = "test_folder/original"
+    modified_folder = "test_folder/modified"
+    change_probability = 0.7  # 70% files will have wrong extensions
     
-    modified_folder = input("Enter path for 'modified' folder (or press Enter for default): ").strip()
-    if not modified_folder:
-        modified_folder = "test_folder/modified"
-    
-    # Get change probability
-    change_prob_input = input("Enter probability of changing extensions (0.0-1.0, default 0.7): ").strip()
-    try:
-        change_probability = float(change_prob_input) if change_prob_input else 0.7
-        change_probability = max(0.0, min(1.0, change_probability))  # Clamp to valid range
-    except ValueError:
-        change_probability = 0.7
-        print("Invalid input, using default probability of 0.7")
-    
-    print(f"Using change probability: {change_probability}")
+    print(f"Using original folder: {original_folder}")
+    print(f"Using modified folder: {modified_folder}")
+    print(f"Change probability: {change_probability} (70% suspicious, 30% legitimate)")
     
     # Create modified files
     changes_df = create_modified_folder(original_folder, modified_folder, change_probability)
