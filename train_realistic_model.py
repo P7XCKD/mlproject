@@ -528,6 +528,27 @@ def main():
     
     print("\n=== Realistic Training Complete! ===")
     print("Model trained with controlled complexity for realistic performance.")
+    
+    # Get best accuracy for summary
+    best_accuracy = max(r['accuracy'] for r in results.values())
+    
+    # Simple Results Summary
+    print("\n" + "="*60)
+    print("🎯 TRAINING RESULTS SUMMARY")
+    print("="*60)
+    print(f"✅ Model Type: Logistic Regression")
+    print(f"✅ Training Accuracy: {best_accuracy:.1%} ({best_accuracy:.3f})")
+    print(f"✅ Total Files Trained: {len(features)} files")
+    print(f"✅ File Types: {', '.join(set(labels)).upper()}")
+    print(f"✅ Feature Dimensions: {features.shape[1]} features")
+    print("\n📊 WHAT THIS MEANS:")
+    print(f"   • The model correctly identifies file types {best_accuracy:.1%} of the time")
+    print(f"   • It learned from {len(features)} different files")
+    print(f"   • Uses {features.shape[1]} different patterns to make decisions")
+    print(f"   • Can detect PDF, PNG, and TXT files by analyzing raw bytes")
+    print("\n🔍 NEXT STEP:")
+    print("   Run 'test_unknown_data.py' to see how it performs on new files!")
+    print("="*60)
 
 if __name__ == "__main__":
     main()

@@ -592,6 +592,42 @@ def main():
                 else:
                     print("💡 INTERPRETATION: These metrics represent the model's real-world performance.")
                     print("   This is the most important test for practical file detection.")
+                
+                # Add detailed summary for each test
+                type_accuracy = results_df['prediction_correct'].mean()
+                detection_accuracy = results_df['detection_correct'].mean()
+                avg_confidence = results_df['confidence'].mean()
+                total_files = len(results_df)
+                
+                print("\n" + "="*60)
+                print(f"📊 {test_name.upper()} FINAL SUMMARY")
+                print("="*60)
+                print(f"✅ Files Tested: {total_files} files")
+                print(f"✅ File Type Accuracy: {type_accuracy:.1%} ({type_accuracy:.3f})")
+                print(f"✅ Security Detection: {detection_accuracy:.1%} ({detection_accuracy:.3f})")
+                print(f"✅ Average Confidence: {avg_confidence:.1%} ({avg_confidence:.3f})")
+                
+                print("\n📊 WHAT THIS MEANS:")
+                if "adversarial" in test_folder:
+                    print(f"   • Model correctly identified {type_accuracy:.1%} of deliberately challenging files")
+                    print(f"   • Detected {detection_accuracy:.1%} of security threats/deceptions")
+                    print(f"   • This shows robustness against intentional attacks")
+                    print(f"   • Lower accuracy is expected and normal for adversarial tests")
+                else:
+                    print(f"   • Model correctly identified {type_accuracy:.1%} of real-world files")
+                    print(f"   • Detected {detection_accuracy:.1%} of suspicious files")
+                    print(f"   • This represents actual performance on fresh, unseen data")
+                    print(f"   • Higher accuracy here means better real-world usability")
+                
+                print("\n🔍 SECURITY IMPACT:")
+                if type_accuracy > 0.8:
+                    print("   🟢 EXCELLENT: Very reliable file type detection")
+                elif type_accuracy > 0.5:
+                    print("   🟡 GOOD: Decent file type detection with room for improvement")
+                else:
+                    print("   🔴 CHALLENGING: Lower accuracy indicates difficult test conditions")
+                
+                print("="*60)
             else:
                 print(f"Failed to test on {test_folder}.")
         else:
