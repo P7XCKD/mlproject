@@ -235,9 +235,8 @@ def main():
         return
     
     # Get folder path
-    modified_folder = input("Enter path to 'modified' folder (or press Enter for default): ").strip()
-    if not modified_folder:
-        modified_folder = "test_folder/modified"
+    modified_folder = "test_folder/modified"
+    print(f"Using modified folder: {modified_folder}")
     
     # Detect suspicious files
     results_df = scan_and_detect_suspicious_files(model, model_info, modified_folder)
