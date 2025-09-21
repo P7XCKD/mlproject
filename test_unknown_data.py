@@ -10,9 +10,252 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 import json
+import shutil
+import random
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, classification_report
 import matplotlib.pyplot as plt
 import seaborn as sns
+
+def auto_generate_test_data(original_folder="test_folder/original", test_folder="test_folder/unknown_test", num_files_per_type=50):
+    """
+    Automatically generate test data from original folder by copying random files.
+    Creates realistic unknown test scenarios.
+    """
+    print(f"🔄 Auto-generating test data from {original_folder}...")
+    
+    # Clear and create test folder structure
+    if os.path.exists(test_folder):
+        shutil.rmtree(test_folder)
+    os.makedirs(test_folder, exist_ok=True)
+    
+    file_types = ['PDF', 'PNG', 'TXT']
+    total_copied = 0
+    log_data = []
+    
+    for file_type in file_types:
+        source_dir = os.path.join(original_folder, file_type)
+        dest_dir = os.path.join(test_folder, file_type)
+        
+        if not os.path.exists(source_dir):
+            print(f"⚠️  Source directory not found: {source_dir}")
+            continue
+            
+        os.makedirs(dest_dir, exist_ok=True)
+        
+        # Get all files from source
+        source_files = [f for f in os.listdir(source_dir) if os.path.isfile(os.path.join(source_dir, f))]
+        
+        if not source_files:
+            print(f"⚠️  No files found in {source_dir}")
+            continue
+            
+        # Randomly select files to copy
+        num_to_copy = min(num_files_per_type, len(source_files))
+        selected_files = random.sample(source_files, num_to_copy)
+        
+        # Copy selected files
+        for file_name in selected_files:
+            source_path = os.path.join(source_dir, file_name)
+            dest_path = os.path.join(dest_dir, file_name)
+            shutil.copy2(source_path, dest_path)
+            
+            # Add to log data
+            log_data.append({
+                'filename': file_name,
+                'true_type': file_type.lower(),
+                'folder_path': file_type,
+                'file_path': os.path.join(file_type, file_name)
+            })
+            
+        total_copied += len(selected_files)
+        print(f"✅ Copied {len(selected_files)} {file_type} files")
+    
+    # Create CSV log file
+    if log_data:
+        log_df = pd.DataFrame(log_data)
+        log_path = os.path.join(test_folder, 'unknown_test_log.csv')
+        log_df.to_csv(log_path, index=False)
+        print(f"📋 Created test log: {log_path}")
+    
+    print(f"🎯 Total test files generated: {total_copied}")
+    return total_copied
+
+def auto_generate_adversarial_data(original_folder="test_folder/original", test_folder="test_folder/adversarial_test", num_files_per_type=30):
+    """
+    Automatically generate adversarial test data with intentional challenges.
+    Creates files with wrong extensions and modified content for robustness testing.
+    """
+    print(f"🔄 Auto-generating adversarial test data from {original_folder}...")
+    
+    # Clear and create test folder structure
+    if os.path.exists(test_folder):
+        shutil.rmtree(test_folder)
+    os.makedirs(test_folder, exist_ok=True)
+    
+    file_types = ['PDF', 'PNG', 'TXT']
+    total_created = 0
+    
+    for file_type in file_types:
+        source_dir = os.path.join(original_folder, file_type)
+        dest_dir = os.path.join(test_folder, file_type)
+        
+        if not os.path.exists(source_dir):
+            continue
+            
+        os.makedirs(dest_dir, exist_ok=True)
+        
+        # Get source files
+        source_files = [f for f in os.listdir(source_dir) if os.path.isfile(os.path.join(source_dir, f))]
+        
+        if not source_files:
+            continue
+            
+        # Create adversarial files
+        num_to_create = min(num_files_per_type, len(source_files))
+        selected_files = random.sample(source_files, num_to_create)
+        
+        for i, file_name in enumerate(selected_files):
+            source_path = os.path.join(source_dir, file_name)
+            
+            # Create adversarial scenarios
+            if i % 3 == 0:
+                # Wrong extension
+                wrong_extensions = {
+                    'PDF': ['.txt', '.png'],
+                    'PNG': ['.pdf', '.txt'], 
+                    'TXT': ['.pdf', '.png']
+                }
+                new_ext = random.choice(wrong_extensions[file_type])
+                base_name = os.path.splitext(file_name)[0]
+                dest_name = f"{base_name}_wrong{new_ext}"
+                dest_path = os.path.join(dest_dir, dest_name)
+                shutil.copy2(source_path, dest_path)
+                
+            elif i % 3 == 1:
+                # Truncated file
+                dest_name = f"truncated_{file_name}"
+                dest_path = os.path.join(dest_dir, dest_name)
+                with open(source_path, 'rb') as src:
+                    data = src.read()
+                # Keep only first 50% of file
+                truncated_data = data[:len(data)//2]
+                with open(dest_path, 'wb') as dst:
+                    dst.write(truncated_data)
+                    
+            else:
+                # Normal copy for comparison
+                dest_path = os.path.join(dest_dir, file_name)
+                shutil.copy2(source_path, dest_path)
+                
+        total_created += num_to_create
+        print(f"✅ Created {num_to_create} adversarial {file_type} files")
+    
+    print(f"🎯 Total adversarial files generated: {total_created}")
+    return total_created
+
+def auto_generate_modified_data(original_folder="test_folder/original", modified_folder="test_folder/modified", num_files_per_type=100):
+    """
+    Automatically generate modified test data with various realistic modifications.
+    Creates files with different corruptions and changes for comprehensive testing.
+    """
+    print(f"🔄 Auto-generating modified test data from {original_folder}...")
+    
+    # Clear and create modified folder structure
+    if os.path.exists(modified_folder):
+        shutil.rmtree(modified_folder)
+    os.makedirs(modified_folder, exist_ok=True)
+    
+    file_types = ['PDF', 'PNG', 'TXT']
+    total_created = 0
+    
+    for file_type in file_types:
+        source_dir = os.path.join(original_folder, file_type)
+        dest_dir = os.path.join(modified_folder, file_type)
+        
+        if not os.path.exists(source_dir):
+            continue
+            
+        os.makedirs(dest_dir, exist_ok=True)
+        
+        # Get source files
+        source_files = [f for f in os.listdir(source_dir) if os.path.isfile(os.path.join(source_dir, f))]
+        
+        if not source_files:
+            continue
+            
+        # Create modified files
+        num_to_create = min(num_files_per_type, len(source_files))
+        selected_files = random.sample(source_files, num_to_create)
+        
+        for i, file_name in enumerate(selected_files):
+            source_path = os.path.join(source_dir, file_name)
+            
+            # Create different types of modifications
+            modification_type = i % 5
+            
+            if modification_type == 0:
+                # Normal copy (baseline)
+                dest_path = os.path.join(dest_dir, file_name)
+                shutil.copy2(source_path, dest_path)
+                
+            elif modification_type == 1:
+                # Header corruption
+                dest_name = f"header_corrupt_{file_name}"
+                dest_path = os.path.join(dest_dir, dest_name)
+                with open(source_path, 'rb') as src:
+                    data = src.read()
+                # Corrupt first 10 bytes
+                if len(data) > 10:
+                    corrupted_data = b'\x00' * 10 + data[10:]
+                else:
+                    corrupted_data = data
+                with open(dest_path, 'wb') as dst:
+                    dst.write(corrupted_data)
+                    
+            elif modification_type == 2:
+                # Size reduction
+                dest_name = f"reduced_{file_name}"
+                dest_path = os.path.join(dest_dir, dest_name)
+                with open(source_path, 'rb') as src:
+                    data = src.read()
+                # Keep 70% of file
+                reduced_data = data[:int(len(data) * 0.7)]
+                with open(dest_path, 'wb') as dst:
+                    dst.write(reduced_data)
+                    
+            elif modification_type == 3:
+                # Random bytes injection
+                dest_name = f"injected_{file_name}"
+                dest_path = os.path.join(dest_dir, dest_name)
+                with open(source_path, 'rb') as src:
+                    data = src.read()
+                # Inject random bytes in middle
+                if len(data) > 100:
+                    split_point = len(data) // 2
+                    random_bytes = bytes([random.randint(0, 255) for _ in range(50)])
+                    modified_data = data[:split_point] + random_bytes + data[split_point:]
+                else:
+                    modified_data = data
+                with open(dest_path, 'wb') as dst:
+                    dst.write(modified_data)
+                    
+            else:
+                # Wrong extension but correct content
+                extensions = {
+                    'PDF': '.pdf_fake',
+                    'PNG': '.png_fake',
+                    'TXT': '.txt_fake'
+                }
+                base_name = os.path.splitext(file_name)[0]
+                dest_name = f"{base_name}{extensions[file_type]}"
+                dest_path = os.path.join(dest_dir, dest_name)
+                shutil.copy2(source_path, dest_path)
+                
+        total_created += num_to_create
+        print(f"✅ Created {num_to_create} modified {file_type} files")
+    
+    print(f"🎯 Total modified files generated: {total_created}")
+    return total_created
 
 def load_model_and_info():
     """Load the trained model and feature information."""
@@ -562,10 +805,46 @@ def main():
     print("Testing ML model performance on completely unknown data...")
     print("This will give us realistic accuracy metrics!")
     
+    # Auto-generate test data from original folder
+    print("\n🔄 STEP 1: Generating test data automatically...")
+    
+    # Generate unknown test data
+    unknown_files = auto_generate_test_data(
+        original_folder="test_folder/original",
+        test_folder="test_folder/unknown_test", 
+        num_files_per_type=50
+    )
+    
+    # Generate adversarial test data
+    adversarial_files = auto_generate_adversarial_data(
+        original_folder="test_folder/original",
+        test_folder="test_folder/adversarial_test",
+        num_files_per_type=30
+    )
+    
+    # Generate modified test data
+    modified_files = auto_generate_modified_data(
+        original_folder="test_folder/original",
+        modified_folder="test_folder/modified",
+        num_files_per_type=80
+    )
+    
+    if unknown_files == 0 and adversarial_files == 0 and modified_files == 0:
+        print("❌ No test data could be generated. Check if original folder exists with data.")
+        return
+    
+    print(f"\n✅ Test data generation complete!")
+    print(f"   • Unknown test files: {unknown_files}")  
+    print(f"   • Adversarial test files: {adversarial_files}")
+    print(f"   • Modified test files: {modified_files}")
+    
+    print("\n🧪 STEP 2: Running tests on generated data...")
+    
     # Check for both unknown test and adversarial test folders
     test_folders = [
         ("test_folder/unknown_test", "Unknown Data Test"),
-        ("test_folder/adversarial_test", "Adversarial Test")
+        ("test_folder/adversarial_test", "Adversarial Test"),
+        ("test_folder/modified", "Modified Data Test")
     ]
     
     for test_folder, test_name in test_folders:
@@ -579,6 +858,12 @@ def main():
                 print("   • Includes challenging edge cases and intentionally deceptive files")
                 print("   • Lower accuracy is expected - shows robustness against attacks")
                 print("   • Helps identify where the model might be vulnerable\\n")
+            elif "modified" in test_folder:
+                print("📝 MODIFIED DATA TEST INFO:")
+                print("   • Tests files with realistic corruptions and modifications")
+                print("   • Includes header corruption, size changes, and content injection")
+                print("   • Simulates real-world file damage and partial corruption")
+                print("   • Tests model robustness against common file issues\\n")
             else:
                 print("📝 UNKNOWN DATA TEST INFO:")
                 print("   • Tests on completely new files the model has never seen")
@@ -594,6 +879,9 @@ def main():
                 if "adversarial" in test_folder:
                     print("💡 INTERPRETATION: These metrics show how the model handles challenging edge cases.")
                     print("   Lower accuracy here is normal and expected for adversarial scenarios.")
+                elif "modified" in test_folder:
+                    print("💡 INTERPRETATION: These metrics show robustness against file corruption.")
+                    print("   Performance here indicates how well the model handles damaged files.")
                 else:
                     print("💡 INTERPRETATION: These metrics represent the model's real-world performance.")
                     print("   This is the most important test for practical file detection.")

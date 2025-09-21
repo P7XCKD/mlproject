@@ -321,7 +321,7 @@ def scan_folder_and_extract_enhanced_features(folder_path, max_files_per_type=40
         return None, None, None
 
     file_data = []
-    type_counts = {'pdf': 0, 'png': 0, 'txt': 0}
+    type_counts = {'pdf': 0, 'png': 0, 'txt': 0, 'jpeg': 0, 'bmp': 0, 'gif': 0, 'tiff': 0}
     content_analysis_stats = {'folder_matches': 0, 'folder_mismatches': 0, 'unknown_content': 0}
     
     # Get all files first, then sample
