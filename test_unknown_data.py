@@ -64,7 +64,9 @@ def auto_generate_test_data(original_folder="test_folder/original", test_folder=
                 'filename': file_name,
                 'true_type': file_type.lower(),
                 'folder_path': file_type,
-                'file_path': os.path.join(file_type, file_name)
+                'filepath': os.path.join(file_type, file_name),
+                'claimed_extension': os.path.splitext(file_name)[1],
+                'status': 'LEGITIMATE'
             })
             
         total_copied += len(selected_files)
@@ -94,6 +96,7 @@ def auto_generate_adversarial_data(original_folder="test_folder/original", test_
     
     file_types = ['PDF', 'PNG', 'TXT']
     total_created = 0
+    log_data = []
     
     for file_type in file_types:
         source_dir = os.path.join(original_folder, file_type)
@@ -131,6 +134,17 @@ def auto_generate_adversarial_data(original_folder="test_folder/original", test_
                 dest_path = os.path.join(dest_dir, dest_name)
                 shutil.copy2(source_path, dest_path)
                 
+                # Add to log (true type is still original)
+                log_data.append({
+                    'filename': dest_name,
+                    'true_type': file_type.lower(),
+                    'folder_path': file_type,
+                    'filepath': os.path.join(file_type, dest_name),
+                    'claimed_extension': new_ext,
+                    'status': 'DECEPTIVE',
+                    'adversarial_type': 'wrong_extension'
+                })
+                
             elif i % 3 == 1:
                 # Truncated file
                 dest_name = f"truncated_{file_name}"
@@ -142,13 +156,42 @@ def auto_generate_adversarial_data(original_folder="test_folder/original", test_
                 with open(dest_path, 'wb') as dst:
                     dst.write(truncated_data)
                     
+                # Add to log
+                log_data.append({
+                    'filename': dest_name,
+                    'true_type': file_type.lower(),
+                    'folder_path': file_type,
+                    'filepath': os.path.join(file_type, dest_name),
+                    'claimed_extension': os.path.splitext(dest_name)[1],
+                    'status': 'DECEPTIVE',
+                    'adversarial_type': 'truncated'
+                })
+                    
             else:
                 # Normal copy for comparison
                 dest_path = os.path.join(dest_dir, file_name)
                 shutil.copy2(source_path, dest_path)
                 
+                # Add to log
+                log_data.append({
+                    'filename': file_name,
+                    'true_type': file_type.lower(),
+                    'folder_path': file_type,
+                    'filepath': os.path.join(file_type, file_name),
+                    'claimed_extension': os.path.splitext(file_name)[1],
+                    'status': 'LEGITIMATE',
+                    'adversarial_type': 'normal'
+                })
+                
         total_created += num_to_create
         print(f"✅ Created {num_to_create} adversarial {file_type} files")
+    
+    # Create CSV log file for adversarial test
+    if log_data:
+        log_df = pd.DataFrame(log_data)
+        log_path = os.path.join(test_folder, 'adversarial_test_log.csv')
+        log_df.to_csv(log_path, index=False)
+        print(f"📋 Created adversarial test log: {log_path}")
     
     print(f"🎯 Total adversarial files generated: {total_created}")
     return total_created
@@ -167,6 +210,7 @@ def auto_generate_modified_data(original_folder="test_folder/original", modified
     
     file_types = ['PDF', 'PNG', 'TXT']
     total_created = 0
+    log_data = []
     
     for file_type in file_types:
         source_dir = os.path.join(original_folder, file_type)
@@ -253,6 +297,30 @@ def auto_generate_modified_data(original_folder="test_folder/original", modified
                 
         total_created += num_to_create
         print(f"✅ Created {num_to_create} modified {file_type} files")
+    
+    # Create CSV log file for modified test (simplified - all files assumed to keep original type)
+    if total_created > 0:
+        # Create a simple log by scanning the generated files
+        log_data = []
+        for file_type in file_types:
+            dest_dir = os.path.join(modified_folder, file_type)
+            if os.path.exists(dest_dir):
+                for filename in os.listdir(dest_dir):
+                    if os.path.isfile(os.path.join(dest_dir, filename)):
+                        log_data.append({
+                            'filename': filename,
+                            'true_type': file_type.lower(),
+                            'folder_path': file_type,
+                            'filepath': os.path.join(file_type, filename),
+                            'claimed_extension': os.path.splitext(filename)[1],
+                            'status': 'LEGITIMATE'
+                        })
+        
+        if log_data:
+            log_df = pd.DataFrame(log_data)
+            log_path = os.path.join(modified_folder, 'unknown_test_log.csv')
+            log_df.to_csv(log_path, index=False)
+            print(f"📋 Created modified test log: {log_path}")
     
     print(f"🎯 Total modified files generated: {total_created}")
     return total_created
@@ -557,6 +625,9 @@ def test_on_unknown_data(test_folder):
     if "adversarial" in test_folder:
         log_filename = "adversarial_test_log.csv"
         test_type = "adversarial"
+    elif "modified" in test_folder:
+        log_filename = "unknown_test_log.csv"  # Use same format as unknown test
+        test_type = "modified"
     else:
         log_filename = "unknown_test_log.csv"
         test_type = "unknown"
@@ -579,7 +650,7 @@ def test_on_unknown_data(test_folder):
     
     print("\\nTesting files...")
     for idx, row in test_df.iterrows():
-        file_path = row['filepath']
+        file_path = os.path.join(test_folder, row['filepath'])  # Add test_folder prefix
         true_type = row['true_type']
         claimed_extension = row['claimed_extension']
         actual_status = row['status']  # DECEPTIVE or LEGITIMATE
@@ -618,7 +689,7 @@ def test_on_unknown_data(test_folder):
                     'detection_correct': detection_correct,
                     'is_malicious_actual': is_actually_malicious,
                     'is_malicious_predicted': is_predicted_malicious,
-                    'folder': row['folder']
+                    'folder': row.get('folder_path', row.get('folder', 'Unknown'))
                 }
                 
                 # Add challenge type for adversarial tests
@@ -660,10 +731,26 @@ def test_on_unknown_data(test_folder):
     # 3. Confusion Matrix
     cm = confusion_matrix(actual_labels, predicted_labels)
     print(f"\\n3. Confusion Matrix:")
-    print(f"   True Negatives (Legitimate correctly identified): {cm[0,0]}")
-    print(f"   False Positives (Legitimate flagged as suspicious): {cm[0,1]}")
-    print(f"   False Negatives (Deceptive missed): {cm[1,0]}")
-    print(f"   True Positives (Deceptive correctly flagged): {cm[1,1]}")
+    
+    # Handle cases where not all classes are present
+    if cm.shape == (1, 1):
+        # Only one class present
+        if actual_labels[0] == False:  # Only legitimate files
+            print(f"   True Negatives (Legitimate correctly identified): {cm[0,0]}")
+            print(f"   False Positives (Legitimate flagged as suspicious): 0")
+            print(f"   False Negatives (Deceptive missed): 0")
+            print(f"   True Positives (Deceptive correctly flagged): 0")
+        else:  # Only deceptive files
+            print(f"   True Negatives (Legitimate correctly identified): 0")
+            print(f"   False Positives (Legitimate flagged as suspicious): 0")
+            print(f"   False Negatives (Deceptive missed): 0")
+            print(f"   True Positives (Deceptive correctly flagged): {cm[0,0]}")
+    else:
+        # Full 2x2 matrix
+        print(f"   True Negatives (Legitimate correctly identified): {cm[0,0]}")
+        print(f"   False Positives (Legitimate flagged as suspicious): {cm[0,1] if cm.shape[1] > 1 else 0}")
+        print(f"   False Negatives (Deceptive missed): {cm[1,0] if cm.shape[0] > 1 else 0}")
+        print(f"   True Positives (Deceptive correctly flagged): {cm[1,1] if cm.shape == (2,2) else 0}")
     
     # 4. By File Type Analysis
     print(f"\\n4. Performance by File Type:")

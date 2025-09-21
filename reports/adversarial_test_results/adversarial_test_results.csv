@@ -1,9 +1,91 @@
-filename,true_type,predicted_type,claimed_extension,predicted_extension,actual_status,predicted_status,confidence,prediction_correct,detection_correct,folder,challenge_type,description
-adversarial_0001_mixed.exe,pdf,pdf,.exe,.pdf,DECEPTIVE,DECEPTIVE,0.6411320255307607,True,True,PDF,Mixed Content,PDF header followed by PNG content
-adversarial_0002_minimal.jpg,pdf,png,.jpg,.png,DECEPTIVE,DECEPTIVE,0.7129361269987539,False,True,PDF,Minimal Magic,Minimal PDF signature with null padding
-adversarial_0003_corrupted.pdf,png,txt,.pdf,.txt,DECEPTIVE,DECEPTIVE,0.9979538043209264,False,True,PNG,Corrupted Magic,Slightly corrupted PNG signature
-adversarial_0004_binary_text.png,txt,txt,.png,.txt,DECEPTIVE,DECEPTIVE,0.9352272077531801,True,True,TXT,Binary-like Text,Text file with escaped binary sequences
-adversarial_0005_tiny.txt,pdf,png,.txt,.png,DECEPTIVE,DECEPTIVE,0.6904973160883745,False,True,PDF,Tiny File,Very small PDF file
-adversarial_0006_polyglot.mp3,pdf,txt,.mp3,.txt,DECEPTIVE,DECEPTIVE,0.9885091414056195,False,True,PDF,Polyglot,File valid as both PDF and text
-adversarial_0007_real.exe,png,txt,.exe,.txt,DECEPTIVE,DECEPTIVE,0.37415724845999554,False,True,PNG,"Real File, Wrong Extension",Legitimate PNG with .exe extension
-adversarial_0008_normal.txt,txt,txt,.txt,.txt,LEGITIMATE,LEGITIMATE,0.8512087830804664,True,True,TXT,Control - Normal,Normal text file with correct extension
+filename,true_type,predicted_type,claimed_extension,predicted_extension,actual_status,predicted_status,threats_detected,threat_score,confidence,prediction_correct,detection_correct,is_malicious_actual,is_malicious_predicted,folder,challenge_type,description
+truncated_horse-87.jpg,png,jpeg,.jpg,.jpeg,DECEPTIVE,MALICIOUS,"HEADER_MANIPULATION,EXTENSION_SPOOFING",0.6,0.9962346212859776,False,True,True,True,PNG,Unknown,No description
+carsgraz_326_wrong.pdf,png,txt,.pdf,.txt,DECEPTIVE,MALICIOUS,"HEADER_MANIPULATION,EXTENSION_SPOOFING",0.6,0.9948257055075541,False,True,True,True,PNG,Unknown,No description
+rider-24_wrong.txt,png,jpeg,.txt,.jpeg,DECEPTIVE,MALICIOUS,"HEADER_MANIPULATION,EXTENSION_SPOOFING",0.6,0.9804052059525977,False,True,True,True,PNG,Unknown,No description
+carsgraz_158_wrong.txt,png,txt,.txt,.txt,DECEPTIVE,SUSPICIOUS,HEADER_MANIPULATION,0.3,0.997990700688908,False,True,True,True,PNG,Unknown,No description
+truncated_business_90.txt,txt,txt,.txt,.txt,DECEPTIVE,LEGITIMATE,NONE,0.0,0.9234048747835333,True,False,True,False,TXT,Unknown,No description
+food_66.txt,txt,txt,.txt,.txt,LEGITIMATE,LEGITIMATE,NONE,0.0,0.8586269801227535,True,True,False,False,TXT,Unknown,No description
+medical_1.txt,txt,txt,.txt,.txt,LEGITIMATE,LEGITIMATE,NONE,0.0,0.937834606223776,True,True,False,False,TXT,Unknown,No description
+F3TG5IF7IJ4M3G6U255KCW355VLFMRBK.pdf,pdf,pdf,.pdf,.pdf,LEGITIMATE,LEGITIMATE,NONE,0.0,0.9405678463599091,True,True,False,False,PDF,Unknown,No description
+horse-44.jpg,png,jpeg,.jpg,.jpeg,LEGITIMATE,MALICIOUS,"HEADER_MANIPULATION,EXTENSION_SPOOFING",0.6,0.989742175795691,False,False,False,True,PNG,Unknown,No description
+carsgraz_110.bmp,png,txt,.bmp,.txt,LEGITIMATE,MALICIOUS,"HEADER_MANIPULATION,EXTENSION_SPOOFING",0.6,0.9992973116970674,False,False,False,True,PNG,Unknown,No description
+truncated_W6DBVMTHBXFF4YFGTJVKRJAR2LFCJRI2.pdf,pdf,pdf,.pdf,.pdf,DECEPTIVE,MALICIOUS,EMBEDDED_EXECUTABLE,0.5,0.9992583034718194,True,True,True,True,PDF,Unknown,No description
+O4BQRWPCNHJGJHA76LLVENRVKSDRAWSR.pdf,pdf,pdf,.pdf,.pdf,LEGITIMATE,LEGITIMATE,NONE,0.0,0.9320000253871885,True,True,False,False,PDF,Unknown,No description
+technologie_51_wrong.pdf,txt,txt,.pdf,.txt,DECEPTIVE,LEGITIMATE,NONE,0.0,0.9582048555968322,True,False,True,False,TXT,Unknown,No description
+cat.49.jpg,png,jpeg,.jpg,.jpeg,LEGITIMATE,MALICIOUS,"HEADER_MANIPULATION,EXTENSION_SPOOFING",0.6,0.9959666997370724,False,False,False,True,PNG,Unknown,No description
+technologie_94_wrong.png,txt,txt,.png,.txt,DECEPTIVE,LEGITIMATE,NONE,0.0,0.9673721046167318,True,False,True,False,TXT,Unknown,No description
+truncated_carsgraz_119.bmp,png,txt,.bmp,.txt,DECEPTIVE,MALICIOUS,"HEADER_MANIPULATION,EXTENSION_SPOOFING",0.6,0.9971890274296309,False,True,True,True,PNG,Unknown,No description
+technologie_40.txt,txt,txt,.txt,.txt,LEGITIMATE,LEGITIMATE,NONE,0.0,0.9223156173102107,True,True,False,False,TXT,Unknown,No description
+technologie_84_wrong.png,txt,txt,.png,.txt,DECEPTIVE,LEGITIMATE,NONE,0.0,0.8798044367584721,True,False,True,False,TXT,Unknown,No description
+food_64.txt,txt,txt,.txt,.txt,LEGITIMATE,LEGITIMATE,NONE,0.0,0.8951868345920475,True,True,False,False,TXT,Unknown,No description
+TNAEWETY6GEU5CQUNT74ABIGQKQEXLTU.pdf,pdf,pdf,.pdf,.pdf,LEGITIMATE,LEGITIMATE,NONE,0.0,0.9984529686566452,True,True,False,False,PDF,Unknown,No description
+truncated_carsgraz_185.bmp,png,txt,.bmp,.txt,DECEPTIVE,MALICIOUS,"HEADER_MANIPULATION,EMBEDDED_EXECUTABLE,EXTENSION_SPOOFING",1.1,0.9728683151875982,False,True,True,True,PNG,Unknown,No description
+0021.png,png,png,.png,.png,LEGITIMATE,LEGITIMATE,NONE,0.0,0.9933024097735279,True,True,False,False,PNG,Unknown,No description
+WTLBOK7EAQPHVUW75UU2AI47NS3XJ7QH.pdf,pdf,pdf,.pdf,.pdf,LEGITIMATE,LEGITIMATE,NONE,0.0,0.9913722305122428,True,True,False,False,PDF,Unknown,No description
+truncated_space_8.txt,txt,txt,.txt,.txt,DECEPTIVE,LEGITIMATE,NONE,0.0,0.6187510478109991,True,False,True,False,TXT,Unknown,No description
+AJUCXMX47JIFDGYJLPX5YLA7W3N4IXSV.pdf,pdf,pdf,.pdf,.pdf,LEGITIMATE,LEGITIMATE,NONE,0.0,0.8483992038614813,True,True,False,False,PDF,Unknown,No description
+FXDCZKVBXPOBKON5ZHKWU6WCDH5BEDYV_wrong.txt,pdf,pdf,.txt,.pdf,DECEPTIVE,LEGITIMATE,NONE,0.0,0.9990729126284554,True,False,True,False,PDF,Unknown,No description
+entertainment_20.txt,txt,txt,.txt,.txt,LEGITIMATE,LEGITIMATE,NONE,0.0,0.8724156745298048,True,True,False,False,TXT,Unknown,No description
+0116_wrong.pdf,png,png,.pdf,.png,DECEPTIVE,LEGITIMATE,NONE,0.0,0.9933024097735279,True,False,True,False,PNG,Unknown,No description
+WSJDEJGLVPP7VL4KJA43GNTHS7CVD5TP.pdf,pdf,pdf,.pdf,.pdf,LEGITIMATE,LEGITIMATE,NONE,0.0,0.9864710558642779,True,True,False,False,PDF,Unknown,No description
+truncated_rider-174.jpg,png,jpeg,.jpg,.jpeg,DECEPTIVE,MALICIOUS,"HEADER_MANIPULATION,EXTENSION_SPOOFING",0.6,0.9653801737518237,False,True,True,True,PNG,Unknown,No description
+carsgraz_276.bmp,png,txt,.bmp,.txt,LEGITIMATE,MALICIOUS,"HEADER_MANIPULATION,EXTENSION_SPOOFING",0.6,0.9994126837550457,False,False,False,True,PNG,Unknown,No description
+truncated_space_84.txt,txt,txt,.txt,.txt,DECEPTIVE,LEGITIMATE,NONE,0.0,0.929649647170825,True,False,True,False,TXT,Unknown,No description
+truncated_4WDM523HPSRSKBCVFVEJGLJ43DYOQRKO.pdf,pdf,pdf,.pdf,.pdf,DECEPTIVE,LEGITIMATE,NONE,0.0,0.9923485622783902,True,False,True,False,PDF,Unknown,No description
+KL6VJRI6EUVHA6S4QIIZ76GT5VIPPD5Y.pdf,pdf,pdf,.pdf,.pdf,LEGITIMATE,LEGITIMATE,NONE,0.0,0.8626306943476291,True,True,False,False,PDF,Unknown,No description
+space_87_wrong.pdf,txt,txt,.pdf,.txt,DECEPTIVE,LEGITIMATE,NONE,0.0,0.8014481793804733,True,False,True,False,TXT,Unknown,No description
+truncated_YI6VCV5U4XK43LKHIXM2ZFEE3CMZSUVY.pdf,pdf,pdf,.pdf,.pdf,DECEPTIVE,LEGITIMATE,NONE,0.0,0.9458770221086112,True,False,True,False,PDF,Unknown,No description
+bike_361_wrong.txt,png,txt,.txt,.txt,DECEPTIVE,SUSPICIOUS,HEADER_MANIPULATION,0.3,0.9999851693125508,False,True,True,True,PNG,Unknown,No description
+2EDEPZ4VHTLPTWSZR6FAVUJ3B2ZVSIPS_wrong.txt,pdf,pdf,.txt,.pdf,DECEPTIVE,LEGITIMATE,NONE,0.0,0.9955640305066425,True,False,True,False,PDF,Unknown,No description
+truncated_bike_016.bmp,png,txt,.bmp,.txt,DECEPTIVE,MALICIOUS,"HEADER_MANIPULATION,EXTENSION_SPOOFING",0.6,0.9996391567795937,False,True,True,True,PNG,Unknown,No description
+3ZVA64MJREBJXFOQOIXK6WJVPBWFJF7L.pdf,pdf,pdf,.pdf,.pdf,LEGITIMATE,LEGITIMATE,NONE,0.0,0.8629107964326828,True,True,False,False,PDF,Unknown,No description
+truncated_HQIOPSJSKZG4AZ2NCERJBQQWVWNJ2CWH.pdf,pdf,pdf,.pdf,.pdf,DECEPTIVE,LEGITIMATE,NONE,0.0,0.9946118740663333,True,False,True,False,PDF,Unknown,No description
+S7IWO47XLGTHHIZJJ5GYT5I4BGLPVL32_wrong.png,pdf,pdf,.png,.pdf,DECEPTIVE,SUSPICIOUS,MALICIOUS_PDF_CONTENT,0.3,0.9951750177434069,True,True,True,True,PDF,Unknown,No description
+truncated_medical_694.txt,txt,txt,.txt,.txt,DECEPTIVE,LEGITIMATE,NONE,0.0,0.9326723470216979,True,False,True,False,TXT,Unknown,No description
+0020_wrong.pdf,png,png,.pdf,.png,DECEPTIVE,LEGITIMATE,NONE,0.0,0.9933024097735279,True,False,True,False,PNG,Unknown,No description
+truncated_dog.69.jpg,png,jpeg,.jpg,.jpeg,DECEPTIVE,MALICIOUS,"HEADER_MANIPULATION,EXTENSION_SPOOFING",0.6,0.994940682293804,False,True,True,True,PNG,Unknown,No description
+truncated_space_26.txt,txt,txt,.txt,.txt,DECEPTIVE,LEGITIMATE,NONE,0.0,0.5560081841978046,True,False,True,False,TXT,Unknown,No description
+graphics_64_wrong.pdf,txt,txt,.pdf,.txt,DECEPTIVE,LEGITIMATE,NONE,0.0,0.7521002091210113,True,False,True,False,TXT,Unknown,No description
+food_85_wrong.pdf,txt,txt,.pdf,.txt,DECEPTIVE,LEGITIMATE,NONE,0.0,0.8141842193649279,True,False,True,False,TXT,Unknown,No description
+carsgraz_153_wrong.pdf,png,txt,.pdf,.txt,DECEPTIVE,MALICIOUS,"HEADER_MANIPULATION,EXTENSION_SPOOFING",0.6,0.9969550881170057,False,True,True,True,PNG,Unknown,No description
+truncated_NCPYKKHSEFYCQGPJBOUJR3XLMIV5A2WT.pdf,pdf,pdf,.pdf,.pdf,DECEPTIVE,LEGITIMATE,NONE,0.0,0.999437878000549,True,False,True,False,PDF,Unknown,No description
+truncated_business_52.txt,txt,txt,.txt,.txt,DECEPTIVE,LEGITIMATE,NONE,0.0,0.956676039210634,True,False,True,False,TXT,Unknown,No description
+truncated_5IXFUAXPIWSNS4I6KSOJCGHEFEEBY5IE.pdf,pdf,pdf,.pdf,.pdf,DECEPTIVE,LEGITIMATE,NONE,0.0,0.90723905252953,True,False,True,False,PDF,Unknown,No description
+truncated_entertainment_46.txt,txt,txt,.txt,.txt,DECEPTIVE,LEGITIMATE,NONE,0.0,0.9124619448356747,True,False,True,False,TXT,Unknown,No description
+business_96_wrong.pdf,txt,txt,.pdf,.txt,DECEPTIVE,LEGITIMATE,NONE,0.0,0.9480057866736482,True,False,True,False,TXT,Unknown,No description
+truncated_space_81.txt,txt,txt,.txt,.txt,DECEPTIVE,LEGITIMATE,NONE,0.0,0.9336681942205916,True,False,True,False,TXT,Unknown,No description
+entertainment_66.txt,txt,txt,.txt,.txt,LEGITIMATE,LEGITIMATE,NONE,0.0,0.9409527848266529,True,True,False,False,TXT,Unknown,No description
+truncated_politics_316.txt,txt,txt,.txt,.txt,DECEPTIVE,LEGITIMATE,NONE,0.0,0.9247985634744428,True,False,True,False,TXT,Unknown,No description
+RXIDHLTDVIBR4P4WOFXTJSSV6A3K5GTZ.pdf,pdf,pdf,.pdf,.pdf,LEGITIMATE,LEGITIMATE,NONE,0.0,0.8672590911106363,True,True,False,False,PDF,Unknown,No description
+80544a7f935d5910e3563d42774ad042e40fe907_wrong.txt,pdf,pdf,.txt,.pdf,DECEPTIVE,LEGITIMATE,NONE,0.0,0.9051436048541077,True,False,True,False,PDF,Unknown,No description
+sport_94_wrong.png,txt,txt,.png,.txt,DECEPTIVE,LEGITIMATE,NONE,0.0,0.9087573309731418,True,False,True,False,TXT,Unknown,No description
+887c6fd22c2be24a023105b3fb23d5e29dfd8055_wrong.png,pdf,pdf,.png,.pdf,DECEPTIVE,LEGITIMATE,NONE,0.0,0.6282152408973872,True,False,True,False,PDF,Unknown,No description
+H7U4KMXPQKUBDKIPQQRC6ETJZEZR3OCZ_wrong.png,pdf,pdf,.png,.pdf,DECEPTIVE,LEGITIMATE,NONE,0.0,0.9993947563295699,True,False,True,False,PDF,Unknown,No description
+truncated_QAPP7VH3R3TX4TUR6WSDP6HW52K2LPAK.pdf,pdf,pdf,.pdf,.pdf,DECEPTIVE,LEGITIMATE,NONE,0.0,0.9984824098280899,True,False,True,False,PDF,Unknown,No description
+truncated_W7KYNROWRCJS5Q4BRHWS65K5BQ7JHZKG.pdf,pdf,pdf,.pdf,.pdf,DECEPTIVE,LEGITIMATE,NONE,0.0,0.9208701469378296,True,False,True,False,PDF,Unknown,No description
+truncated_5CCWTN5UI7YVM55N2H5CXFYZ44PMKUB4.pdf,pdf,pdf,.pdf,.pdf,DECEPTIVE,LEGITIMATE,NONE,0.0,0.9119050853070373,True,False,True,False,PDF,Unknown,No description
+truncated_dog.189.jpg,png,jpeg,.jpg,.jpeg,DECEPTIVE,MALICIOUS,"HEADER_MANIPULATION,EXTENSION_SPOOFING",0.6,0.9938002577179362,False,True,True,True,PNG,Unknown,No description
+truncated_carsgraz_039.bmp,png,txt,.bmp,.txt,DECEPTIVE,MALICIOUS,"HEADER_MANIPULATION,EXTENSION_SPOOFING",0.6,0.997004075974595,False,True,True,True,PNG,Unknown,No description
+bike_085_wrong.pdf,png,txt,.pdf,.txt,DECEPTIVE,MALICIOUS,"HEADER_MANIPULATION,EMBEDDED_EXECUTABLE,EXTENSION_SPOOFING",1.1,0.9999245875443041,False,True,True,True,PNG,Unknown,No description
+MM3LE7UZACMNXBDXA5FM6MTGBLZG7N4W_wrong.txt,pdf,pdf,.txt,.pdf,DECEPTIVE,LEGITIMATE,NONE,0.0,0.9928613763966573,True,False,True,False,PDF,Unknown,No description
+space_27.txt,txt,txt,.txt,.txt,LEGITIMATE,LEGITIMATE,NONE,0.0,0.8407048875950037,True,True,False,False,TXT,Unknown,No description
+fb8c6201bfd519374fe7aba9648e678df1b4492d_wrong.png,pdf,pdf,.png,.pdf,DECEPTIVE,LEGITIMATE,NONE,0.0,0.9030016877478017,True,False,True,False,PDF,Unknown,No description
+truncated_horse-82.jpg,png,jpeg,.jpg,.jpeg,DECEPTIVE,MALICIOUS,"HEADER_MANIPULATION,EXTENSION_SPOOFING",0.6,0.9958560073903127,False,True,True,True,PNG,Unknown,No description
+carsgraz_322.bmp,png,txt,.bmp,.txt,LEGITIMATE,MALICIOUS,"HEADER_MANIPULATION,EXTENSION_SPOOFING",0.6,0.999819506931513,False,False,False,True,PNG,Unknown,No description
+carsgraz_002.bmp,png,txt,.bmp,.txt,LEGITIMATE,MALICIOUS,"HEADER_MANIPULATION,EXTENSION_SPOOFING",0.6,0.9986064908889442,False,False,False,True,PNG,Unknown,No description
+medical_327_wrong.png,txt,txt,.png,.txt,DECEPTIVE,LEGITIMATE,NONE,0.0,0.9144488590517272,True,False,True,False,TXT,Unknown,No description
+politics_119.txt,txt,txt,.txt,.txt,LEGITIMATE,LEGITIMATE,NONE,0.0,0.9650755194363849,True,True,False,False,TXT,Unknown,No description
+medical_134.txt,txt,txt,.txt,.txt,LEGITIMATE,LEGITIMATE,NONE,0.0,0.9660388505336563,True,True,False,False,TXT,Unknown,No description
+2QCQAIXCPZZPZPEEBHJT4WUB5BA42DCP.pdf,pdf,pdf,.pdf,.pdf,LEGITIMATE,LEGITIMATE,NONE,0.0,0.999206161226307,True,True,False,False,PDF,Unknown,No description
+bike_344_wrong.txt,png,txt,.txt,.txt,DECEPTIVE,SUSPICIOUS,HEADER_MANIPULATION,0.3,0.9989076966791207,False,True,True,True,PNG,Unknown,No description
+cat.175.jpg,png,jpeg,.jpg,.jpeg,LEGITIMATE,MALICIOUS,"HEADER_MANIPULATION,EXTENSION_SPOOFING",0.6,0.9962940428502975,False,False,False,True,PNG,Unknown,No description
+carsgraz_409.bmp,png,txt,.bmp,.txt,LEGITIMATE,MALICIOUS,"HEADER_MANIPULATION,EXTENSION_SPOOFING",0.6,0.9964940316067409,False,False,False,True,PNG,Unknown,No description
+carsgraz_015_wrong.txt,png,txt,.txt,.txt,DECEPTIVE,SUSPICIOUS,HEADER_MANIPULATION,0.3,0.9999885475232517,False,True,True,True,PNG,Unknown,No description
+truncated_5EAVIV25ANDVUI4BBJQE6S5KDAECENZZ.pdf,pdf,pdf,.pdf,.pdf,DECEPTIVE,LEGITIMATE,NONE,0.0,0.9976463978057171,True,False,True,False,PDF,Unknown,No description
+DXPFLLZRFX6PVX7MBUEEPEVO6AJTVUDR_wrong.txt,pdf,pdf,.txt,.pdf,DECEPTIVE,LEGITIMATE,NONE,0.0,0.526479285391112,True,False,True,False,PDF,Unknown,No description
+business_87_wrong.png,txt,txt,.png,.txt,DECEPTIVE,LEGITIMATE,NONE,0.0,0.8812277270054016,True,False,True,False,TXT,Unknown,No description
+truncated_business_100.txt,txt,txt,.txt,.txt,DECEPTIVE,LEGITIMATE,NONE,0.0,0.8094880467824574,True,False,True,False,TXT,Unknown,No description
+JFUKR5IZBGDNDWX75DHLDWK323RQOXPB_wrong.txt,pdf,pdf,.txt,.pdf,DECEPTIVE,LEGITIMATE,NONE,0.0,0.8955017588229058,True,False,True,False,PDF,Unknown,No description
+truncated_rider-47.jpg,png,jpeg,.jpg,.jpeg,DECEPTIVE,MALICIOUS,"HEADER_MANIPULATION,EXTENSION_SPOOFING",0.6,0.9692254345442882,False,True,True,True,PNG,Unknown,No description
+horse-49.jpg,png,jpeg,.jpg,.jpeg,LEGITIMATE,MALICIOUS,"HEADER_MANIPULATION,EXTENSION_SPOOFING",0.6,0.9949413926484484,False,False,False,True,PNG,Unknown,No description
+graphics_92.txt,txt,txt,.txt,.txt,LEGITIMATE,LEGITIMATE,NONE,0.0,0.967947300757138,True,True,False,False,TXT,Unknown,No description
