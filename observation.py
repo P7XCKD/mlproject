@@ -84,12 +84,6 @@ def explain_model_training(model_info, training_data):
         print(f"\n📊 TRAINING DATA:")
         for file_type, count in file_counts.items():
             print(f"   • {file_type.upper()}: {count} example files")
-        
-        print(f"\n💡 IN SIMPLE TERMS:")
-        print(f"   • Think of it like teaching a child to recognize animals")
-        print(f"   • You show them many photos of cats, dogs, and birds")
-        print(f"   • They learn the differences (fur, feathers, etc.)")
-        print(f"   • Our AI learned file differences the same way")
 
 def explain_real_world_performance(test_results):
     """Explain how the model performs on real data"""
