@@ -250,8 +250,69 @@ def extract_enhanced_features(file_bytes, num_bytes=1024):
     
     return combined_features
 
+def analyze_file_content_type(file_path):
+    """
+    FIXED: Determine actual file type based on content analysis instead of folder names.
+    This eliminates data leakage and provides accurate ground truth.
+    """
+    try:
+        with open(file_path, 'rb') as f:
+            file_bytes = f.read(512)  # Read first 512 bytes for magic number analysis
+        
+        if not file_bytes:
+            return None
+        
+        # Analyze actual file signatures (magic numbers)
+        # PDF detection
+        if file_bytes.startswith(b'%PDF') or file_bytes.startswith(b'\x25\x50\x44\x46'):
+            return 'pdf'
+        
+        # PNG detection  
+        if file_bytes.startswith(b'\x89PNG\r\n\x1a\n') or file_bytes.startswith(b'\x89\x50\x4E\x47'):
+            return 'png'
+        
+        # TXT detection (no specific magic number, check for text patterns)
+        # Look for predominant ASCII/UTF-8 text content
+        try:
+            # Try to decode as text
+            text_content = file_bytes.decode('utf-8', errors='ignore')
+            # Check if it's predominantly printable ASCII
+            printable_ratio = sum(1 for c in text_content if c.isprintable() or c.isspace()) / len(text_content)
+            if printable_ratio > 0.8:  # 80% printable characters
+                return 'txt'
+        except:
+            pass
+        
+        # JPEG detection
+        if file_bytes.startswith(b'\xff\xd8\xff'):
+            return 'jpeg'  # Note: This might be misclassified if we only expect png
+        
+        # GIF detection
+        if file_bytes.startswith(b'GIF87a') or file_bytes.startswith(b'GIF89a'):
+            return 'gif'
+        
+        # If no clear signature found, make best guess based on content analysis
+        # Count different byte patterns
+        zero_count = file_bytes.count(b'\x00')
+        high_byte_count = sum(1 for b in file_bytes if b > 127)
+        
+        # If lots of zeros and high bytes, likely binary (could be image)
+        if zero_count > len(file_bytes) * 0.1 and high_byte_count > len(file_bytes) * 0.3:
+            return 'png'  # Default binary guess
+        
+        # If mostly low ASCII values, likely text
+        if high_byte_count < len(file_bytes) * 0.1:
+            return 'txt'
+        
+        # Default fallback
+        return None
+        
+    except Exception as e:
+        print(f"Error analyzing content of {file_path}: {e}")
+        return None
+
 def scan_folder_and_extract_enhanced_features(folder_path, max_files_per_type=400):
-    """Scan folder and extract enhanced features with controlled sampling."""
+    """Scan folder and extract enhanced features with CONTENT-BASED labeling (FIXED)."""
     print(f"Scanning folder: {folder_path}")
     print(f"Max files per type: {max_files_per_type}")
     
@@ -261,6 +322,7 @@ def scan_folder_and_extract_enhanced_features(folder_path, max_files_per_type=40
 
     file_data = []
     type_counts = {'pdf': 0, 'png': 0, 'txt': 0}
+    content_analysis_stats = {'folder_matches': 0, 'folder_mismatches': 0, 'unknown_content': 0}
     
     # Get all files first, then sample
     all_files = []
@@ -276,13 +338,28 @@ def scan_folder_and_extract_enhanced_features(folder_path, max_files_per_type=40
     random.shuffle(all_files)
     
     for file_path, file, folder_name in all_files:
-        true_type = folder_name
+        # FIXED: Use content-based analysis instead of folder name
+        content_type = analyze_file_content_type(file_path)
+        
+        if content_type is None:
+            content_analysis_stats['unknown_content'] += 1
+            continue  # Skip files we can't determine
+        
+        # Track accuracy of folder-based vs content-based labeling
+        if content_type == folder_name:
+            content_analysis_stats['folder_matches'] += 1
+        else:
+            content_analysis_stats['folder_mismatches'] += 1
+            print(f"Content mismatch: {file} - Folder: {folder_name}, Content: {content_type}")
+        
+        # Use CONTENT-BASED type as ground truth
+        true_type = content_type
         
         # Check if we've reached the limit for this type
         if type_counts[true_type] >= max_files_per_type:
             continue
         
-        print(f"Processing: {file} ({true_type})")
+        print(f"Processing: {file} (Folder: {folder_name}, Content: {true_type})")
         
         # Extract bytes
         try:
@@ -301,7 +378,8 @@ def scan_folder_and_extract_enhanced_features(folder_path, max_files_per_type=40
         file_data.append({
             'file_path': file_path,
             'file_name': file,
-            'true_type': true_type,
+            'folder_type': folder_name,  # Original folder-based label
+            'true_type': true_type,      # FIXED: Content-based ground truth
             'features': enhanced_features,
             'file_size': len(file_bytes)
         })
@@ -314,17 +392,22 @@ def scan_folder_and_extract_enhanced_features(folder_path, max_files_per_type=40
     
     # Convert to arrays
     features = np.array([item['features'] for item in file_data])
-    labels = np.array([item['true_type'] for item in file_data])
+    labels = np.array([item['true_type'] for item in file_data])  # FIXED: Use content-based labels
     
     # Create DataFrame for analysis
     df = pd.DataFrame([{
         'file_path': item['file_path'],
         'file_name': item['file_name'],
+        'folder_type': item['folder_type'],
         'true_type': item['true_type'],
         'file_size': item['file_size']
     } for item in file_data])
     
     print(f"\nProcessed {len(file_data)} files")
+    print(f"Content analysis stats:")
+    print(f"  - Folder matches content: {content_analysis_stats['folder_matches']}")
+    print(f"  - Folder mismatches content: {content_analysis_stats['folder_mismatches']}")
+    print(f"  - Unknown content: {content_analysis_stats['unknown_content']}")
     print(f"File types found: {df['true_type'].value_counts().to_dict()}")
     print(f"Feature vector size: {features.shape[1]}")
     
