@@ -18,7 +18,7 @@ DISGUISE_EXTENSIONS = [
 
 def create_modified_folder(original_folder, modified_folder, change_probability=0.7):
     """
-    Copy files from original folder and randomly change extensions.
+    Copy files from original folder and randomly change extensions while maintaining folder structure.
     
     Args:
         original_folder: Path to original files
@@ -38,11 +38,21 @@ def create_modified_folder(original_folder, modified_folder, change_probability=
     # Track changes
     changes_log = []
     
-    # Process all files
+    # Process all files while maintaining folder structure
     for root, dirs, files in os.walk(original_folder):
         for file in files:
             original_path = os.path.join(root, file)
             original_name, original_ext = os.path.splitext(file)
+            
+            # Get relative path to maintain folder structure
+            relative_root = os.path.relpath(root, original_folder)
+            if relative_root == '.':
+                # Files in root directory
+                target_subfolder = modified_folder
+            else:
+                # Files in subdirectories (PDF/, PNG/, TXT/)
+                target_subfolder = os.path.join(modified_folder, relative_root)
+                os.makedirs(target_subfolder, exist_ok=True)
             
             # Decide whether to change extension
             change_extension = random.random() < change_probability
@@ -63,8 +73,8 @@ def create_modified_folder(original_folder, modified_folder, change_probability=
                 new_ext = original_ext
                 status = "UNCHANGED"
             
-            # Copy file with new name
-            modified_path = os.path.join(modified_folder, new_filename)
+            # Copy file with new name to the appropriate subfolder
+            modified_path = os.path.join(target_subfolder, new_filename)
             
             try:
                 shutil.copy2(original_path, modified_path)
@@ -107,7 +117,7 @@ def create_modified_folder(original_folder, modified_folder, change_probability=
         return None
 
 def create_specific_test_cases(original_folder, modified_folder):
-    """Create specific test cases for demonstration."""
+    """Create specific test cases for demonstration while maintaining folder structure."""
     print("\n=== Creating Specific Test Cases ===")
     
     # Define specific suspicious combinations
@@ -118,9 +128,7 @@ def create_specific_test_cases(original_folder, modified_folder):
         ('.jpg', '.exe'),   # Image disguised as executable
     ]
     
-    specific_folder = os.path.join(modified_folder, 'specific_tests')
-    os.makedirs(specific_folder, exist_ok=True)
-    
+    # Create specific_tests folder in each category
     created_tests = []
     
     for original_ext, fake_ext in test_cases:
@@ -131,9 +139,20 @@ def create_specific_test_cases(original_folder, modified_folder):
                     original_path = os.path.join(root, file)
                     original_name = os.path.splitext(file)[0]
                     
+                    # Get relative path to maintain folder structure
+                    relative_root = os.path.relpath(root, original_folder)
+                    if relative_root == '.':
+                        # Files in root directory
+                        target_subfolder = os.path.join(modified_folder, 'specific_tests')
+                    else:
+                        # Files in subdirectories (PDF/, PNG/, TXT/)
+                        target_subfolder = os.path.join(modified_folder, relative_root, 'specific_tests')
+                    
+                    os.makedirs(target_subfolder, exist_ok=True)
+                    
                     # Create disguised version
                     fake_filename = f"{original_name}_disguised{fake_ext}"
-                    fake_path = os.path.join(specific_folder, fake_filename)
+                    fake_path = os.path.join(target_subfolder, fake_filename)
                     
                     try:
                         shutil.copy2(original_path, fake_path)
@@ -142,9 +161,10 @@ def create_specific_test_cases(original_folder, modified_folder):
                             'fake_file': fake_filename,
                             'true_type': original_ext,
                             'fake_type': fake_ext,
-                            'path': fake_path
+                            'path': fake_path,
+                            'folder': relative_root
                         })
-                        print(f"Created: {file} → {fake_filename}")
+                        print(f"Created in {relative_root}/: {file} → {fake_filename}")
                         break
                     except Exception as e:
                         print(f"Error creating test case {fake_filename}: {e}")
@@ -153,8 +173,9 @@ def create_specific_test_cases(original_folder, modified_folder):
             break
     
     if created_tests:
+        # Save overall test log
         test_df = pd.DataFrame(created_tests)
-        test_log_path = os.path.join(specific_folder, 'specific_tests_log.csv')
+        test_log_path = os.path.join(modified_folder, 'specific_tests_log.csv')
         test_df.to_csv(test_log_path, index=False)
         print(f"Specific tests log saved to: {test_log_path}")
     
