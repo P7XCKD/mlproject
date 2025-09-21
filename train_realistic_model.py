@@ -334,8 +334,9 @@ def scan_folder_and_extract_enhanced_features(folder_path, max_files_per_type=40
             if folder_name in ['pdf', 'png', 'txt']:
                 all_files.append((file_path, file, folder_name))
     
-    # Shuffle and limit per type
+    # Shuffle and limit per type - DIFFERENT ORDER EACH RUN
     random.shuffle(all_files)
+    print(f"📝 Files randomized for varied training data each run")
     
     for file_path, file, folder_name in all_files:
         # FIXED: Use content-based analysis instead of folder name
@@ -417,10 +418,14 @@ def train_realistic_models(X, y):
     """Train models with parameters tuned for realistic accuracy."""
     print(f"\n=== Training Realistic ML Models ===")
     
-    # Split data
+    # Split data with different randomization each run for better validation
+    import time
+    random_seed = int(time.time()) % 10000  # Different seed each run but deterministic
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.25, random_state=42, stratify=y
+        X, y, test_size=0.25, random_state=random_seed, stratify=y
     )
+    
+    print(f"Using random seed: {random_seed} (ensures different splits each run)")
     
     print(f"Training set: {X_train.shape[0]} samples")
     print(f"Test set: {X_test.shape[0]} samples")
@@ -430,7 +435,7 @@ def train_realistic_models(X, y):
         'Logistic Regression': LogisticRegression(
             max_iter=500,           # Reduced iterations
             C=0.1,                  # More regularization
-            random_state=42,
+            random_state=random_seed,  # Use the same random seed
             solver='liblinear'      # Simpler solver
         )
     }

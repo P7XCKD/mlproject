@@ -325,7 +325,12 @@ def test_on_unknown_data(test_folder):
         return None
     
     test_df = pd.read_csv(test_log_path)
+    
+    # RANDOMIZE test order for better validation - different results each run
+    test_df = test_df.sample(frac=1).reset_index(drop=True)  # Shuffle all rows
+    
     print(f"Loaded test log with {len(test_df)} files")
+    print("📝 Test files randomized for more realistic evaluation")
     
     results = []
     
