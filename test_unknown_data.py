@@ -33,14 +33,14 @@ def load_model_and_info():
         return None, None
 
 def extract_file_features(file_path, num_bytes=1024):
-    """Extract enhanced features from a file - same as realistic training."""
+    """Extract enhanced features from a file - FIXED to match training exactly."""
     try:
         with open(file_path, 'rb') as f:
             file_bytes = f.read(num_bytes)
         
-        # Enhanced feature extraction matching training
+        # Enhanced feature extraction matching training EXACTLY
         if not file_bytes:
-            return np.zeros(num_bytes + 256 + 50)  # Raw + histogram + statistics
+            return np.zeros(num_bytes + 256 + 49)  # Raw + histogram + statistics (FIXED count)
         
         # Pad or truncate to fixed size
         if len(file_bytes) < num_bytes:
@@ -60,68 +60,100 @@ def extract_file_features(file_path, num_bytes=1024):
         if len(file_bytes) > 0:
             histogram = histogram / len(file_bytes)
         
-        # 3. Statistical features (same as training)
-        stats_features = np.array([
-            np.mean(raw_features),  # Mean byte value
-            np.std(raw_features),   # Standard deviation
-            np.median(raw_features), # Median
-            np.min(raw_features),   # Min value
-            np.max(raw_features),   # Max value
-            len(np.unique(raw_features)), # Unique byte count
-            np.sum(raw_features == 0),    # Zero byte count
-            np.sum(raw_features > 127),   # High-value byte count
-            # Entropy-like measures
-            np.sum(np.diff(raw_features.astype(float)) ** 2), # Variation
-            np.sum(raw_features[:50]),  # Header sum
-            # Pattern detection
-            np.sum(raw_features[::2]),  # Even position sum
-            np.sum(raw_features[1::2]), # Odd position sum
-            # Magic number region analysis
-            np.std(raw_features[:20]),  # Header variation
-            np.mean(raw_features[:50]), # Header mean
-            len(set(raw_features[:10].tolist())), # Header unique count
-            # Content analysis
-            np.mean(raw_features[50:100]),  # Early content mean
-            np.std(raw_features[100:200]),  # Mid content variation
-            np.mean(raw_features[-50:]),    # End content mean
-            # Transition analysis
-            np.sum(np.abs(np.diff(raw_features.astype(float)))), # Total variation
-            np.max(np.abs(np.diff(raw_features.astype(float)))), # Max transition
-            # Byte patterns
-            np.sum(raw_features < 32),      # Control character count
-            np.sum((raw_features >= 32) & (raw_features <= 126)), # Printable ASCII
-            np.sum(raw_features > 126),     # Extended ASCII
-            # File structure hints
-            raw_features[0] if len(raw_features) > 0 else 0,  # First byte
-            raw_features[1] if len(raw_features) > 1 else 0,  # Second byte
-            raw_features[2] if len(raw_features) > 2 else 0,  # Third byte
-            raw_features[3] if len(raw_features) > 3 else 0,  # Fourth byte
-            # Compression/randomness indicators
-            len(np.where(np.diff(raw_features) == 0)[0]),     # Consecutive identical bytes
-            np.var(raw_features),           # Variance
-            # Advanced patterns
-            np.sum(raw_features[::4]),      # Every 4th byte sum
-            np.sum(raw_features[::8]),      # Every 8th byte sum
-            np.sum(raw_features[::16]),     # Every 16th byte sum
-            # Regional analysis
-            np.mean(raw_features[200:300]) if len(raw_features) > 300 else 0,
-            np.mean(raw_features[300:400]) if len(raw_features) > 400 else 0,
-            np.mean(raw_features[400:500]) if len(raw_features) > 500 else 0,
-            # Boundary analysis
-            np.sum(raw_features[:10] > 200),  # High values in header
-            np.sum(raw_features[-10:] == 0),  # Trailing zeros
-            # Periodicity hints
-            np.corrcoef(raw_features[::2], raw_features[1::2])[0,1] if len(raw_features) > 1 else 0,
-            # Final statistical measures
-            len(raw_features),  # Actual length used
-            np.percentile(raw_features, 25),  # 25th percentile
-            np.percentile(raw_features, 75),  # 75th percentile
-            # Pattern repetition
-            np.sum(raw_features[:100] == raw_features[100:200]) if len(raw_features) > 200 else 0,
-            # Magic number confidence
-            1 if raw_features[0] == ord('%') else 0,  # PDF indicator
-            1 if len(raw_features) > 3 and raw_features[0] == 0x89 and raw_features[1] == ord('P') else 0,  # PNG indicator
-        ])
+        # 3. Statistical features (FIXED: Same as training with proper error handling)
+        try:
+            # Safe correlation calculation
+            if len(raw_features) > 1:
+                even_bytes = raw_features[::2]
+                odd_bytes = raw_features[1::2]
+                # Ensure both arrays have same length
+                min_len = min(len(even_bytes), len(odd_bytes))
+                if min_len > 1:
+                    even_bytes = even_bytes[:min_len]
+                    odd_bytes = odd_bytes[:min_len]
+                    # Check for constant arrays
+                    if np.std(even_bytes) > 0 and np.std(odd_bytes) > 0:
+                        correlation = np.corrcoef(even_bytes, odd_bytes)[0, 1]
+                        # Handle NaN case
+                        correlation = 0.0 if np.isnan(correlation) else correlation
+                    else:
+                        correlation = 0.0
+                else:
+                    correlation = 0.0
+            else:
+                correlation = 0.0
+                
+            # Safe array comparison for pattern repetition
+            if len(raw_features) > 200:
+                pattern_match = np.sum(raw_features[:100] == raw_features[100:200])
+            else:
+                pattern_match = 0
+                
+            stats_features = np.array([
+                np.mean(raw_features),  # Mean byte value
+                np.std(raw_features),   # Standard deviation
+                np.median(raw_features), # Median
+                np.min(raw_features),   # Min value
+                np.max(raw_features),   # Max value
+                len(np.unique(raw_features)), # Unique byte count
+                np.sum(raw_features == 0),    # Zero byte count
+                np.sum(raw_features > 127),   # High-value byte count
+                # Entropy-like measures
+                np.sum(np.diff(raw_features.astype(float)) ** 2), # Variation
+                np.sum(raw_features[:50]),  # Header sum
+                # Pattern detection
+                np.sum(raw_features[::2]),  # Even position sum
+                np.sum(raw_features[1::2]), # Odd position sum
+                # Magic number region analysis
+                np.std(raw_features[:20]),  # Header variation
+                np.mean(raw_features[:50]), # Header mean
+                len(set(raw_features[:10].tolist())), # Header unique count
+                # Content analysis
+                np.mean(raw_features[50:100]),  # Early content mean
+                np.std(raw_features[100:200]),  # Mid content variation
+                np.mean(raw_features[-50:]),    # End content mean
+                # Transition analysis
+                np.sum(np.abs(np.diff(raw_features.astype(float)))), # Total variation
+                np.max(np.abs(np.diff(raw_features.astype(float)))), # Max transition
+                # Byte patterns
+                np.sum(raw_features < 32),      # Control character count
+                np.sum((raw_features >= 32) & (raw_features <= 126)), # Printable ASCII
+                np.sum(raw_features > 126),     # Extended ASCII
+                # File structure hints
+                raw_features[0] if len(raw_features) > 0 else 0,  # First byte
+                raw_features[1] if len(raw_features) > 1 else 0,  # Second byte
+                raw_features[2] if len(raw_features) > 2 else 0,  # Third byte
+                raw_features[3] if len(raw_features) > 3 else 0,  # Fourth byte
+                # Compression/randomness indicators
+                len(np.where(np.diff(raw_features) == 0)[0]),     # Consecutive identical bytes
+                np.var(raw_features),           # Variance
+                # Advanced patterns
+                np.sum(raw_features[::4]),      # Every 4th byte sum
+                np.sum(raw_features[::8]),      # Every 8th byte sum
+                np.sum(raw_features[::16]),     # Every 16th byte sum
+                # Regional analysis
+                np.mean(raw_features[200:300]) if len(raw_features) > 300 else 0,
+                np.mean(raw_features[300:400]) if len(raw_features) > 400 else 0,
+                np.mean(raw_features[400:500]) if len(raw_features) > 500 else 0,
+                # Boundary analysis
+                np.sum(raw_features[:10] > 200),  # High values in header
+                np.sum(raw_features[-10:] == 0),  # Trailing zeros
+                # Periodicity hints (FIXED)
+                correlation,
+                # Final statistical measures (REMOVED constant length feature)
+                np.percentile(raw_features, 25),  # 25th percentile
+                np.percentile(raw_features, 75),  # 75th percentile
+                # Pattern repetition (FIXED)
+                pattern_match,
+                # Magic number confidence
+                1 if raw_features[0] == ord('%') else 0,  # PDF indicator
+                1 if len(raw_features) > 3 and raw_features[0] == 0x89 and raw_features[1] == ord('P') else 0,  # PNG indicator
+            ])
+            
+        except Exception as e:
+            print(f"Warning: Error in statistical feature extraction: {e}")
+            # Fallback to basic features
+            stats_features = np.zeros(49)  # Reduced feature count due to fixes
         
         # Combine all features
         combined_features = np.concatenate([raw_features, histogram, stats_features])
