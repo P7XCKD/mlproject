@@ -1,0 +1,9 @@
+filename,true_type,predicted_type,claimed_extension,predicted_extension,actual_status,predicted_status,confidence,prediction_correct,detection_correct,folder,challenge_type,description
+adversarial_0001_mixed.exe,pdf,pdf,.exe,.pdf,DECEPTIVE,DECEPTIVE,0.6411320255307607,True,True,PDF,Mixed Content,PDF header followed by PNG content
+adversarial_0002_minimal.jpg,pdf,png,.jpg,.png,DECEPTIVE,DECEPTIVE,0.7129361269987539,False,True,PDF,Minimal Magic,Minimal PDF signature with null padding
+adversarial_0003_corrupted.pdf,png,txt,.pdf,.txt,DECEPTIVE,DECEPTIVE,0.9979538043209264,False,True,PNG,Corrupted Magic,Slightly corrupted PNG signature
+adversarial_0004_binary_text.png,txt,txt,.png,.txt,DECEPTIVE,DECEPTIVE,0.9352272077531801,True,True,TXT,Binary-like Text,Text file with escaped binary sequences
+adversarial_0005_tiny.txt,pdf,png,.txt,.png,DECEPTIVE,DECEPTIVE,0.6904973160883745,False,True,PDF,Tiny File,Very small PDF file
+adversarial_0006_polyglot.mp3,pdf,txt,.mp3,.txt,DECEPTIVE,DECEPTIVE,0.9885091414056195,False,True,PDF,Polyglot,File valid as both PDF and text
+adversarial_0007_real.exe,png,txt,.exe,.txt,DECEPTIVE,DECEPTIVE,0.37415724845999554,False,True,PNG,"Real File, Wrong Extension",Legitimate PNG with .exe extension
+adversarial_0008_normal.txt,txt,txt,.txt,.txt,LEGITIMATE,LEGITIMATE,0.8512087830804664,True,True,TXT,Control - Normal,Normal text file with correct extension
